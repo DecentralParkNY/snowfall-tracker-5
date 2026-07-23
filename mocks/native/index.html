@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+  --navy: #0a192f;
+  --ice: #e6f1ff;
+  --frost: rgba(255, 255, 255, 0.15);
+}
+body, html {
+  margin: 0; padding: 0; height: 100%; overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--navy);
+  color: var(--ice);
+  transition: background 1s ease;
+}
+.canvas {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100vh; text-align: center; position: relative;
+  background: radial-gradient(circle at center, #112240 0%, var(--navy) 100%);
+}
+.glass {
+  background: var(--frost);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 3rem; border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  z-index: 10;
+  max-width: 400px;
+}
+h1 {
+  font-weight: 300; letter-spacing: 0.4em; text-transform: uppercase;
+  font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.8;
+}
+.pitch {
+  font-size: 1.5rem; line-height: 1.4; margin-bottom: 2rem; font-weight: 400;
+}
+.input-group {
+  position: relative; display: inline-block;
+}
+input {
+  background: transparent; border: none; border-bottom: 2px solid var(--ice);
+  color: var(--ice); font-size: 2rem; width: 100px; text-align: center;
+  outline: none; font-family: inherit;
+}
+.unit { font-size: 1rem; margin-left: 8px; opacity: 0.6; }
+#snow-field {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1;
+}
+.flake {
+  position: absolute; background: white; border-radius: 50%;
+  filter: blur(1px); opacity: 0.7;
+  animation: drift linear infinite;
+}
+@keyframes drift {
+  from { transform: translateY(-10vh) rotate(0deg); }
+  to { transform: translateY(110vh) rotate(360deg); }
+}
+</style>
+</head>
+<body>
+<div class="canvas" id="bg">
+  <div id="snow-field"></div>
+  <div class="glass">
+    <h1>Nivalis</h1>
+    <div class="pitch">Turn your winter's accumulation into a digital sanctuary.</div>
+    <div class="input-group">
+      <input type="number" id="snow-input" value="12" min="0" max="500">
+      <span class="unit">inches</span>
+    </div>
+  </div>
+</div>
+<script>
+const input = document.getElementById('snow-input');
+const field = document.getElementById('snow-field');
+const bg = document.getElementById('bg');
+
+function updateSanctuary() {
+  const val = parseInt(input.value) || 0;
+  
+  // Shift background gradient
+  const lightness = Math.min(10 + (val / 10), 40);
+  bg.style.background = `radial-gradient(circle at center, hsl(220, 30%, ${lightness}%), #0a192f)`;
+
+  // Procedural Snowflake Cluster
+  field.innerHTML = '';
+  const count = Math.min(val * 5, 400);
+  for(let i=0; i<count; i++) {
+    const flake = document.createElement('div');
+    flake.className = 'flake';
+    const size = Math.random() * 4 + 1 + 'px';
+    flake.style.width = size;
+    flake.style.height = size;
+    flake.style.left = Math.random() * 100 + '%';
+    flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    flake.style.animationDelay = Math.random() * 5 + 's';
+    flake.style.opacity = Math.random() * 0.8;
+    field.appendChild(flake);
+  }
+}
+
+input.addEventListener('input', updateSanctuary);
+updateSanctuary();
+</script>
+</body>
+</html>
